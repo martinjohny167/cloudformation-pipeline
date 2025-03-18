@@ -1,18 +1,18 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Template to create an S3 bucket with versioning enabled or disabled.
+Description: CloudFormation template to create an S3 bucket with configurable name and versioning
 
 Parameters:
   BucketName:
     Type: String
-    Description: Name of the S3 bucket.
-    Default: mjlab2
-  EnableVersioning:
+    Description: The name of the S3 bucket
+
+  VersioningEnabled:
     Type: String
-    Description: Enable versioning for the S3 bucket.
-    Default: true
+    Default: 'Enabled'
     AllowedValues:
-      - true
-      - false
+      - 'Enabled'
+      - 'Disabled'
+    Description: Enable or disable versioning for the S3 bucket
 
 Resources:
   S3Bucket:
@@ -20,19 +20,9 @@ Resources:
     Properties:
       BucketName: !Ref BucketName
       VersioningConfiguration:
-        Status: !If [IsVersioningEnabled, 'Enabled', 'Suspended']
-
-Conditions:
-  IsVersioningEnabled: !Equals [!Ref EnableVersioning, 'true']
+        Status: !Ref VersioningEnabled
 
 Outputs:
   BucketName:
-    Description: Name of the S3 bucket
+    Description: The name of the created S3 bucket
     Value: !Ref S3Bucket
-  BucketARN:
-    Description: ARN of the S3 bucket
-    Value: !GetAtt S3Bucket.Arn
-  WebsiteURL:
-    Description: URL for the S3 bucket website
-    Value: !GetAtt S3Bucket.WebsiteURL
-    Condition: IsVersioningEnabled
